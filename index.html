@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>IE Toolkit — Almas Shahriar</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;600;700;900&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0d0f12;
+    --bg2: #13161b;
+    --bg3: #1a1e26;
+    --border: #2a2f3a;
+    --accent: #00c2ff;
+    --accent2: #ff6b35;
+    --accent3: #00e5a0;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --mono: 'Share Tech Mono', monospace;
+    --sans: 'Barlow', sans-serif;
+    --cond: 'Barlow Condensed', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,194,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,194,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 0 24px 80px; }
+
+  /* ── HEADER ── */
+  header {
+    padding: 56px 0 40px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 48px;
+    animation: fadeDown 0.6s ease both;
+  }
+
+  .header-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .header-tag::before {
+    content: '';
+    display: inline-block;
+    width: 24px; height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-family: var(--cond);
+    font-size: clamp(42px, 8vw, 72px);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -1px;
+    text-transform: uppercase;
+  }
+  h1 span { color: var(--accent); }
+
+  .header-sub {
+    margin-top: 16px;
+    font-size: 15px;
+    color: var(--muted);
+    font-weight: 300;
+    letter-spacing: 0.5px;
+  }
+  .header-sub strong { color: var(--text); font-weight: 600; }
+
+  .header-meta {
+    margin-top: 24px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .meta-pill {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    letter-spacing: 1px;
+  }
+
+  /* ── TOOL TABS ── */
+  .tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 0;
+    border-bottom: 1px solid var(--border);
+    animation: fadeDown 0.6s 0.1s ease both;
+  }
+
+  .tab-btn {
+    background: none;
+    border: none;
+    font-family: var(--cond);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 14px 24px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-btn .num {
+    font-family: var(--mono);
+    font-size: 10px;
+    background: var(--border);
+    padding: 2px 5px;
+    color: var(--muted);
+  }
+  .tab-btn.active .num { background: rgba(0,194,255,0.15); color: var(--accent); }
+
+  /* ── PANELS ── */
+  .panel { display: none; animation: fadeUp 0.35s ease both; }
+  .panel.active { display: block; }
+
+  .panel-header {
+    padding: 36px 0 28px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 32px;
+  }
+  .panel-title {
+    font-family: var(--cond);
+    font-size: 28px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .panel-desc {
+    margin-top: 6px;
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 300;
+  }
+
+  /* ── FORM ELEMENTS ── */
+  .field-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  input[type="number"], input[type="text"], textarea {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 15px;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+    -moz-appearance: textfield;
+  }
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  input:focus, textarea:focus { border-color: var(--accent); }
+
+  textarea {
+    resize: vertical;
+    min-height: 140px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .hint {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: -12px;
+    margin-bottom: 20px;
+    opacity: 0.7;
+  }
+
+  .add-row-btn {
+    background: none;
+    border: 1px dashed var(--border);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 8px 16px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+    margin-bottom: 24px;
+  }
+  .add-row-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .calc-btn {
+    background: var(--accent);
+    border: none;
+    color: #000;
+    font-family: var(--cond);
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 14px 36px;
+    cursor: pointer;
+    transition: all 0.2s;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  }
+  .calc-btn:hover { background: #33cfff; transform: translateY(-1px); }
+  .calc-btn:active { transform: translateY(0); }
+
+  .reset-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: 12px;
+  }
+  .reset-btn:hover { border-color: var(--muted); color: var(--text); }
+
+  /* ── RESULTS ── */
+  .results {
+    margin-top: 36px;
+    display: none;
+    animation: fadeUp 0.4s ease both;
+  }
+  .results.show { display: block; }
+
+  .results-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .results-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .result-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .result-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-top: 2px solid var(--accent);
+    padding: 16px 18px;
+  }
+  .result-card.highlight { border-top-color: var(--accent2); }
+  .result-card.good { border-top-color: var(--accent3); }
+
+  .result-card .rc-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .result-card .rc-value {
+    font-family: var(--cond);
+    font-size: 28px;
+    font-weight: 900;
+    line-height: 1;
+  }
+  .result-card .rc-unit {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* ── ABC TABLE ── */
+  .abc-table-wrap { overflow-x: auto; margin-top: 8px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(42,47,58,0.5);
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .badge {
+    font-family: var(--cond);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 2px 10px;
+    letter-spacing: 1px;
+  }
+  .badge-A { background: rgba(0,229,160,0.15); color: var(--accent3); }
+  .badge-B { background: rgba(0,194,255,0.15); color: var(--accent); }
+  .badge-C { background: rgba(107,114,128,0.15); color: var(--muted); }
+
+  /* ── TIME STUDY ROWS ── */
+  .ts-rows { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+  .ts-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 32px;
+    gap: 10px;
+    align-items: end;
+  }
+  .ts-row label { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 1px; }
+  .remove-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 16px;
+    width: 32px; height: 36px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: auto;
+  }
+  .remove-btn:hover { border-color: #ff4444; color: #ff4444; }
+
+  /* ── LINE BALANCING TASKS ── */
+  .lb-rows { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+  .lb-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 32px;
+    gap: 10px;
+    align-items: end;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    margin-top: 80px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .footer-name {
+    font-family: var(--cond);
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .footer-name span { color: var(--accent); }
+  .footer-links { display: flex; gap: 20px; }
+  .footer-links a {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 1px;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--accent); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── SEPARATOR ── */
+  .section-sep {
+    margin: 32px 0;
+    border: none;
+    border-top: 1px solid var(--border);
+  }
+
+  .formula-box {
+    background: var(--bg3);
+    border-left: 3px solid var(--accent);
+    padding: 14px 18px;
+    margin-bottom: 28px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+  .formula-box span { color: var(--text); }
+
+  @media (max-width: 600px) {
+    .tabs { overflow-x: auto; }
+    .tab-btn { padding: 12px 16px; font-size: 11px; }
+    .ts-row { grid-template-columns: 1fr 1fr; }
+    .ts-row .remove-btn { grid-column: span 2; width: 100%; }
+    .lb-row { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-tag">Industrial Engineering Toolkit</div>
+    <h1>IE <span>Calc</span><br/>Suite</h1>
+    <p class="header-sub">Built by <strong>Almas Shahriar</strong> · IPE Student, BUET · Practical tools for real-world IE problems.</p>
+    <div class="header-meta">
+      <span class="meta-pill">v1.0.0</span>
+      <span class="meta-pill">3 TOOLS</span>
+      <span class="meta-pill">NO BACKEND</span>
+      <span class="meta-pill">BUET IPE '26</span>
+    </div>
+  </header>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('timestudy', this)">
+      <span class="num">01</span> Time Study
+    </button>
+    <button class="tab-btn" onclick="switchTab('linebalance', this)">
+      <span class="num">02</span> Line Balancing
+    </button>
+    <button class="tab-btn" onclick="switchTab('abc', this)">
+      <span class="num">03</span> ABC Analysis
+    </button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       PANEL 1 — TIME STUDY
+  ══════════════════════════════════════════════ -->
+  <div class="panel active" id="panel-timestudy">
+    <div class="panel-header">
+      <div class="panel-title">⏱ Time Study Calculator</div>
+      <div class="panel-desc">Enter observed times per element. Get Normal Time & Standard Time with PFD allowance.</div>
+    </div>
+
+    <div class="formula-box">
+      <span>Normal Time</span> = Observed Time × (Rating Factor / 100)<br/>
+      <span>Standard Time</span> = Normal Time × (1 + Allowance / 100)
+    </div>
+
+    <div class="field-group">
+      <div class="field">
+        <label>Rating Factor (%)</label>
+        <input type="number" id="ts-rating" value="100" min="0" max="200"/>
+      </div>
+      <div class="field">
+        <label>PFD Allowance (%)</label>
+        <input type="number" id="ts-allowance" value="15" min="0" max="100"/>
+      </div>
+      <div class="field">
+        <label>No. of Observations</label>
+        <input type="number" id="ts-obs" value="5" min="1" max="30"/>
+      </div>
+    </div>
+
+    <p style="font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:14px;text-transform:uppercase;">Work Elements</p>
+    <div class="ts-rows" id="ts-rows">
+      <!-- rows injected by JS -->
+    </div>
+
+    <button class="add-row-btn" onclick="addTSRow()">+ Add Element</button>
+
+    <div>
+      <button class="calc-btn" onclick="calcTimeStudy()">Calculate</button>
+      <button class="reset-btn" onclick="resetTS()">Reset</button>
+    </div>
+
+    <div class="results" id="ts-results">
+      <div class="results-label">OUTPUT</div>
+      <div class="result-cards" id="ts-cards"></div>
+      <div class="abc-table-wrap">
+        <table id="ts-table">
+          <thead>
+            <tr>
+              <th>Element</th>
+              <th>Obs. Times</th>
+              <th>Mean (s)</th>
+              <th>Normal Time (s)</th>
+              <th>Std Time (s)</th>
+            </tr>
+          </thead>
+          <tbody id="ts-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       PANEL 2 — LINE BALANCING
+  ══════════════════════════════════════════════ -->
+  <div class="panel" id="panel-linebalance">
+    <div class="panel-header">
+      <div class="panel-title">⚖ Line Balancing Calculator</div>
+      <div class="panel-desc">Enter task times and number of workstations. Get efficiency, idle time, and bottleneck identification.</div>
+    </div>
+
+    <div class="formula-box">
+      <span>Cycle Time</span> = Production Time / Required Output &nbsp;|&nbsp; <span>Min Stations</span> = Σ Task Times / Cycle Time<br/>
+      <span>Efficiency</span> = (Σ Task Times) / (N × Cycle Time) × 100 &nbsp;|&nbsp; <span>Balance Delay</span> = 100 − Efficiency
+    </div>
+
+    <div class="field-group">
+      <div class="field">
+        <label>Production Time (min/shift)</label>
+        <input type="number" id="lb-prodtime" value="480" min="1"/>
+      </div>
+      <div class="field">
+        <label>Required Output (units/shift)</label>
+        <input type="number" id="lb-output" value="240" min="1"/>
+      </div>
+      <div class="field">
+        <label>No. of Workstations</label>
+        <input type="number" id="lb-stations" value="4" min="1"/>
+      </div>
+    </div>
+
+    <p style="font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:14px;text-transform:uppercase;">Tasks / Operations</p>
+    <div class="lb-rows" id="lb-rows"></div>
+    <button class="add-row-btn" onclick="addLBRow()">+ Add Task</button>
+
+    <div>
+      <button class="calc-btn" onclick="calcLineBalance()">Calculate</button>
+      <button class="reset-btn" onclick="resetLB()">Reset</button>
+    </div>
+
+    <div class="results" id="lb-results">
+      <div class="results-label">OUTPUT</div>
+      <div class="result-cards" id="lb-cards"></div>
+      <div class="abc-table-wrap" style="margin-top:24px;">
+        <table>
+          <thead>
+            <tr>
+              <th>Task</th>
+              <th>Time (min)</th>
+              <th>% of Cycle</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="lb-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       PANEL 3 — ABC ANALYSIS
+  ══════════════════════════════════════════════ -->
+  <div class="panel" id="panel-abc">
+    <div class="panel-header">
+      <div class="panel-title">📦 ABC Analysis Classifier</div>
+      <div class="panel-desc">Paste item data (one per line: Item, Annual Usage, Unit Cost). Auto-classifies by annual value.</div>
+    </div>
+
+    <div class="formula-box">
+      <span>Annual Value</span> = Annual Usage × Unit Cost<br/>
+      <span>Class A</span> = Top items contributing ~70% of total value &nbsp;|&nbsp;
+      <span>B</span> = Next ~20% &nbsp;|&nbsp;
+      <span>C</span> = Remaining ~10%
+    </div>
+
+    <div class="field-group" style="grid-template-columns: 1fr 1fr 1fr; margin-bottom:8px;">
+      <div class="field">
+        <label>Class A Threshold (%)</label>
+        <input type="number" id="abc-a" value="70" min="1" max="99"/>
+      </div>
+      <div class="field">
+        <label>Class B Threshold (%)</label>
+        <input type="number" id="abc-b" value="90" min="1" max="99"/>
+      </div>
+      <div class="field" style="justify-content:flex-end;">
+        <label>&nbsp;</label>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--muted);padding:10px 0;">C = remainder</div>
+      </div>
+    </div>
+
+    <div class="field" style="margin-bottom:8px;">
+      <label>Item Data (Item Name, Annual Usage, Unit Cost)</label>
+      <textarea id="abc-input" placeholder="SKU-001, 5000, 12.50&#10;SKU-002, 300, 85.00&#10;SKU-003, 12000, 2.10&#10;SKU-004, 150, 220.00&#10;SKU-005, 8000, 5.00&#10;SKU-006, 90, 450.00&#10;SKU-007, 4500, 18.00"></textarea>
+    </div>
+    <p class="hint">// Format: Name, Quantity, Unit Cost — one item per line</p>
+
+    <div>
+      <button class="calc-btn" onclick="calcABC()">Classify</button>
+      <button class="reset-btn" onclick="resetABC()">Reset</button>
+    </div>
+
+    <div class="results" id="abc-results">
+      <div class="results-label">OUTPUT</div>
+      <div class="result-cards" id="abc-cards"></div>
+      <div class="abc-table-wrap" style="margin-top:8px;">
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Item</th>
+              <th>Annual Usage</th>
+              <th>Unit Cost</th>
+              <th>Annual Value</th>
+              <th>% of Total</th>
+              <th>Cumulative %</th>
+              <th>Class</th>
+            </tr>
+          </thead>
+          <tbody id="abc-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-name">Almas <span>Shahriar</span> · IPE BUET</div>
+    <div class="footer-links">
+      <a href="https://www.linkedin.com/in/almasshahriar/" target="_blank">LinkedIn</a>
+      <a href="mailto:almasalif123@gmail.com">Email</a>
+      <a href="https://github.com/almasshahriar" target="_blank">GitHub</a>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+// ════════════════════════════
+// TAB SWITCHING
+// ════════════════════════════
+function switchTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ════════════════════════════
+// TIME STUDY
+// ════════════════════════════
+let tsRowCount = 0;
+
+function addTSRow(name = '', times = '') {
+  tsRowCount++;
+  const obs = parseInt(document.getElementById('ts-obs').value) || 5;
+  const row = document.createElement('div');
+  row.className = 'ts-row';
+  row.id = 'ts-row-' + tsRowCount;
+  row.innerHTML = `
+    <div class="field">
+      ${tsRowCount === 1 ? '<label>Element Name</label>' : '<label>&nbsp;</label>'}
+      <input type="text" placeholder="e.g. Dyeing" value="${name}" class="ts-name"/>
+    </div>
+    <div class="field">
+      ${tsRowCount === 1 ? `<label>Observed Times (${obs} values, comma-separated)</label>` : '<label>&nbsp;</label>'}
+      <input type="text" placeholder="e.g. 12.3, 11.8, 12.1" value="${times}" class="ts-times"/>
+    </div>
+    <div class="field" style="display:none;"></div>
+    <button class="remove-btn" onclick="removeTSRow('ts-row-${tsRowCount}')">×</button>
+  `;
+  document.getElementById('ts-rows').appendChild(row);
+}
+
+function removeTSRow(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
+}
+
+function calcTimeStudy() {
+  const rating = parseFloat(document.getElementById('ts-rating').value) || 100;
+  const allowance = parseFloat(document.getElementById('ts-allowance').value) || 15;
+  const rows = document.querySelectorAll('.ts-row');
+
+  if (!rows.length) { alert('Please add at least one work element.'); return; }
+
+  let totalNormal = 0, totalStd = 0;
+  const tbody = document.getElementById('ts-tbody');
+  tbody.innerHTML = '';
+
+  rows.forEach(row => {
+    const name = row.querySelector('.ts-name').value || 'Element';
+    const timesRaw = row.querySelector('.ts-times').value;
+    const times = timesRaw.split(',').map(t => parseFloat(t.trim())).filter(t => !isNaN(t));
+    if (!times.length) return;
+    const mean = times.reduce((a, b) => a + b, 0) / times.length;
+    const normal = mean * (rating / 100);
+    const std = normal * (1 + allowance / 100);
+    totalNormal += normal;
+    totalStd += std;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${name}</td>
+      <td style="color:var(--muted)">${times.join(', ')}</td>
+      <td>${mean.toFixed(2)}</td>
+      <td>${normal.toFixed(2)}</td>
+      <td style="color:var(--accent3);font-weight:700">${std.toFixed(2)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // Summary row
+  const trSum = document.createElement('tr');
+  trSum.style.borderTop = '1px solid var(--border)';
+  trSum.innerHTML = `
+    <td colspan="3" style="font-family:var(--cond);font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:12px;color:var(--muted)">TOTAL</td>
+    <td style="color:var(--accent);font-weight:700">${totalNormal.toFixed(2)}</td>
+    <td style="color:var(--accent3);font-weight:700">${totalStd.toFixed(2)}</td>
+  `;
+  tbody.appendChild(trSum);
+
+  const cards = document.getElementById('ts-cards');
+  cards.innerHTML = `
+    <div class="result-card">
+      <div class="rc-label">Rating Factor</div>
+      <div class="rc-value">${rating}</div>
+      <div class="rc-unit">percent</div>
+    </div>
+    <div class="result-card highlight">
+      <div class="rc-label">Total Normal Time</div>
+      <div class="rc-value">${totalNormal.toFixed(2)}</div>
+      <div class="rc-unit">seconds</div>
+    </div>
+    <div class="result-card good">
+      <div class="rc-label">Total Standard Time</div>
+      <div class="rc-value">${totalStd.toFixed(2)}</div>
+      <div class="rc-unit">seconds</div>
+    </div>
+    <div class="result-card">
+      <div class="rc-label">PFD Allowance</div>
+      <div class="rc-value">${allowance}</div>
+      <div class="rc-unit">percent added</div>
+    </div>
+  `;
+
+  const res = document.getElementById('ts-results');
+  res.style.display = 'none';
+  res.classList.remove('show');
+  setTimeout(() => { res.classList.add('show'); res.style.display = 'block'; }, 10);
+}
+
+function resetTS() {
+  document.getElementById('ts-rows').innerHTML = '';
+  tsRowCount = 0;
+  document.getElementById('ts-results').classList.remove('show');
+  document.getElementById('ts-results').style.display = 'none';
+  initTS();
+}
+
+function initTS() {
+  addTSRow('Loading', '22.1, 21.8, 22.5, 21.9, 22.3');
+  addTSRow('Dyeing', '85.2, 86.1, 84.8, 85.5, 85.0');
+  addTSRow('Unloading', '18.4, 17.9, 18.2, 18.6, 18.1');
+}
+
+// ════════════════════════════
+// LINE BALANCING
+// ════════════════════════════
+let lbRowCount = 0;
+
+function addLBRow(name = '', time = '') {
+  lbRowCount++;
+  const row = document.createElement('div');
+  row.className = 'lb-row';
+  row.id = 'lb-row-' + lbRowCount;
+  row.innerHTML = `
+    <div class="field">
+      ${lbRowCount === 1 ? '<label>Task Name</label>' : '<label>&nbsp;</label>'}
+      <input type="text" placeholder="e.g. Task A" value="${name}" class="lb-name"/>
+    </div>
+    <div class="field">
+      ${lbRowCount === 1 ? '<label>Task Time (min)</label>' : '<label>&nbsp;</label>'}
+      <input type="number" placeholder="1.5" value="${time}" class="lb-time" min="0" step="0.01"/>
+    </div>
+    <button class="remove-btn" onclick="removeLBRow('lb-row-${lbRowCount}')">×</button>
+  `;
+  document.getElementById('lb-rows').appendChild(row);
+}
+
+function removeLBRow(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
+}
+
+function calcLineBalance() {
+  const prodTime = parseFloat(document.getElementById('lb-prodtime').value) || 480;
+  const output = parseFloat(document.getElementById('lb-output').value) || 240;
+  const stations = parseInt(document.getElementById('lb-stations').value) || 4;
+  const cycleTime = prodTime / output;
+
+  const rows = document.querySelectorAll('.lb-row');
+  if (!rows.length) { alert('Please add at least one task.'); return; }
+
+  let tasks = [];
+  rows.forEach(row => {
+    const name = row.querySelector('.lb-name').value || 'Task';
+    const time = parseFloat(row.querySelector('.lb-time').value) || 0;
+    tasks.push({ name, time });
+  });
+
+  const sumTasks = tasks.reduce((a, t) => a + t.time, 0);
+  const minStations = Math.ceil(sumTasks / cycleTime);
+  const efficiency = (sumTasks / (stations * cycleTime)) * 100;
+  const balanceDelay = 100 - efficiency;
+  const totalIdle = (stations * cycleTime) - sumTasks;
+  const bottleneck = tasks.reduce((a, t) => t.time > a.time ? t : a, tasks[0]);
+
+  const tbody = document.getElementById('lb-tbody');
+  tbody.innerHTML = '';
+  tasks.forEach(t => {
+    const pct = (t.time / cycleTime * 100).toFixed(1);
+    const isBottleneck = t.name === bottleneck.name && t.time === bottleneck.time;
+    const overload = t.time > cycleTime;
+    let status = `<span style="color:var(--accent3);font-size:12px">✓ OK</span>`;
+    if (overload) status = `<span style="color:#ff4444;font-size:12px">⚠ Exceeds CT</span>`;
+    else if (isBottleneck) status = `<span style="color:var(--accent2);font-size:12px">★ Bottleneck</span>`;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${t.name}</td>
+      <td style="color:var(--accent)">${t.time.toFixed(3)}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:${Math.min(parseFloat(pct),100)}px;height:4px;background:${overload?'#ff4444':'var(--accent)'};min-width:4px;"></div>
+          <span style="color:var(--muted)">${pct}%</span>
+        </div>
+      </td>
+      <td>${status}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  const cards = document.getElementById('lb-cards');
+  cards.innerHTML = `
+    <div class="result-card">
+      <div class="rc-label">Cycle Time</div>
+      <div class="rc-value">${cycleTime.toFixed(3)}</div>
+      <div class="rc-unit">min / unit</div>
+    </div>
+    <div class="result-card good">
+      <div class="rc-label">Line Efficiency</div>
+      <div class="rc-value">${efficiency.toFixed(1)}</div>
+      <div class="rc-unit">percent</div>
+    </div>
+    <div class="result-card highlight">
+      <div class="rc-label">Balance Delay</div>
+      <div class="rc-value">${balanceDelay.toFixed(1)}</div>
+      <div class="rc-unit">percent idle</div>
+    </div>
+    <div class="result-card">
+      <div class="rc-label">Min Stations Needed</div>
+      <div class="rc-value">${minStations}</div>
+      <div class="rc-unit">you have ${stations}</div>
+    </div>
+    <div class="result-card">
+      <div class="rc-label">Total Idle Time</div>
+      <div class="rc-value">${totalIdle.toFixed(3)}</div>
+      <div class="rc-unit">min / cycle</div>
+    </div>
+    <div class="result-card highlight">
+      <div class="rc-label">Bottleneck Task</div>
+      <div class="rc-value" style="font-size:18px">${bottleneck.name}</div>
+      <div class="rc-unit">${bottleneck.time.toFixed(3)} min</div>
+    </div>
+  `;
+
+  const res = document.getElementById('lb-results');
+  res.style.display = 'none';
+  res.classList.remove('show');
+  setTimeout(() => { res.classList.add('show'); res.style.display = 'block'; }, 10);
+}
+
+function resetLB() {
+  document.getElementById('lb-rows').innerHTML = '';
+  lbRowCount = 0;
+  document.getElementById('lb-results').classList.remove('show');
+  document.getElementById('lb-results').style.display = 'none';
+  initLB();
+}
+
+function initLB() {
+  const defaults = [
+    ['Cutting', '1.2'], ['Sewing', '1.8'], ['Inspection', '0.9'],
+    ['Folding', '0.7'], ['Packing', '1.1']
+  ];
+  defaults.forEach(([n, t]) => addLBRow(n, t));
+}
+
+// ════════════════════════════
+// ABC ANALYSIS
+// ════════════════════════════
+function calcABC() {
+  const threshA = parseFloat(document.getElementById('abc-a').value) || 70;
+  const threshB = parseFloat(document.getElementById('abc-b').value) || 90;
+  const raw = document.getElementById('abc-input').value.trim();
+  if (!raw) { alert('Please enter item data.'); return; }
+
+  const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+  let items = [];
+  lines.forEach(line => {
+    const parts = line.split(',').map(p => p.trim());
+    if (parts.length < 3) return;
+    const name = parts[0];
+    const usage = parseFloat(parts[1]);
+    const cost = parseFloat(parts[2]);
+    if (isNaN(usage) || isNaN(cost)) return;
+    items.push({ name, usage, cost, value: usage * cost });
+  });
+
+  if (!items.length) { alert('Could not parse data. Use format: Name, Usage, Cost per line.'); return; }
+
+  items.sort((a, b) => b.value - a.value);
+  const totalValue = items.reduce((s, i) => s + i.value, 0);
+
+  let cumPct = 0;
+  items = items.map((item, idx) => {
+    const pct = (item.value / totalValue) * 100;
+    cumPct += pct;
+    let cls = 'C';
+    if (cumPct - pct < threshA) cls = 'A';
+    else if (cumPct - pct < threshB) cls = 'B';
+    return { ...item, pct, cumPct, cls, rank: idx + 1 };
+  });
+
+  const countA = items.filter(i => i.cls === 'A').length;
+  const countB = items.filter(i => i.cls === 'B').length;
+  const countC = items.filter(i => i.cls === 'C').length;
+  const valA = items.filter(i => i.cls === 'A').reduce((s, i) => s + i.value, 0);
+
+  const tbody = document.getElementById('abc-tbody');
+  tbody.innerHTML = '';
+  items.forEach(item => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="color:var(--muted)">#${item.rank}</td>
+      <td style="font-weight:600">${item.name}</td>
+      <td>${item.usage.toLocaleString()}</td>
+      <td>${item.cost.toFixed(2)}</td>
+      <td style="color:var(--text)">${item.value.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+      <td style="color:var(--muted)">${item.pct.toFixed(2)}%</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:${Math.round(item.cumPct)}px;height:3px;max-width:120px;background:var(--accent);opacity:0.4;min-width:4px;"></div>
+          <span style="color:var(--muted)">${item.cumPct.toFixed(1)}%</span>
+        </div>
+      </td>
+      <td><span class="badge badge-${item.cls}">${item.cls}</span></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  const cards = document.getElementById('abc-cards');
+  cards.innerHTML = `
+    <div class="result-card good">
+      <div class="rc-label">Class A Items</div>
+      <div class="rc-value">${countA}</div>
+      <div class="rc-unit">${(valA/totalValue*100).toFixed(1)}% of total value</div>
+    </div>
+    <div class="result-card">
+      <div class="rc-label">Class B Items</div>
+      <div class="rc-value">${countB}</div>
+      <div class="rc-unit">medium priority</div>
+    </div>
+    <div class="result-card">
+      <div class="rc-label">Class C Items</div>
+      <div class="rc-value">${countC}</div>
+      <div class="rc-unit">low priority</div>
+    </div>
+    <div class="result-card highlight">
+      <div class="rc-label">Total Annual Value</div>
+      <div class="rc-value" style="font-size:20px">${totalValue.toLocaleString('en-US',{maximumFractionDigits:0})}</div>
+      <div class="rc-unit">across ${items.length} SKUs</div>
+    </div>
+  `;
+
+  const res = document.getElementById('abc-results');
+  res.style.display = 'none';
+  res.classList.remove('show');
+  setTimeout(() => { res.classList.add('show'); res.style.display = 'block'; }, 10);
+}
+
+function resetABC() {
+  document.getElementById('abc-input').value = `SKU-001, 5000, 12.50
+SKU-002, 300, 85.00
+SKU-003, 12000, 2.10
+SKU-004, 150, 220.00
+SKU-005, 8000, 5.00
+SKU-006, 90, 450.00
+SKU-007, 4500, 18.00`;
+  document.getElementById('abc-results').classList.remove('show');
+  document.getElementById('abc-results').style.display = 'none';
+}
+
+// ════════════════════════════
+// INIT
+// ════════════════════════════
+initTS();
+initLB();
+</script>
+</body>
+</html>
